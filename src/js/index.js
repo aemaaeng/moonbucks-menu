@@ -1,7 +1,7 @@
 // step 1: 요구사항 구현을 위한 전략
 // TODO 메뉴 추가
 // - [x] 에스프레소 메뉴에 새로운 메뉴를 엔터키 입력으로 추가한다.
-// - [ ] 에스프레소 메뉴에 새로운 메뉴를 확인 버튼으로 추가한다.
+// - [x] 에스프레소 메뉴에 새로운 메뉴를 확인 버튼으로 추가한다.
 // - [x] 추가되는 메뉴의 아래 마크업은 `<ul id="espresso-menu-list" class="mt-3 pl-0"></ul>` 안에 삽입해야 한다.
 // - [x] 메뉴가 추가되고 나면, input은 빈 값으로 초기화한다.
 // - [x] 사용자 입력값이 빈 값이라면 추가되지 않는다.
@@ -23,19 +23,15 @@ function App() {
     e.preventDefault();
   });
 
-  // 메뉴의 이름을 입력 받기
-  $("#espresso-menu-name").addEventListener("keypress", (e) => {
-    if (e.key !== "Enter") return;
-
+  const addEspressoMenuName = () => {
     if ($("#espresso-menu-name").value === "") {
       alert("값을 입력해주세요.");
       return;
     }
 
-    if (e.key === "Enter") {
-      const $espressoMenuName = $("#espresso-menu-name").value;
-      const menuItemTemplate = (espressoMenuName) => {
-        return `<li class="menu-list-item d-flex items-center py-2">
+    const $espressoMenuName = $("#espresso-menu-name").value;
+    const menuItemTemplate = (espressoMenuName) => {
+      return `<li class="menu-list-item d-flex items-center py-2">
         <span class="w-100 pl-2 menu-name">${espressoMenuName}</span>
         <button
           type="button"
@@ -50,16 +46,28 @@ function App() {
           삭제
         </button>
       </li>`;
-      };
+    };
 
-      $("#espresso-menu-list").insertAdjacentHTML(
-        "beforeend",
-        menuItemTemplate($espressoMenuName)
-      );
+    $("#espresso-menu-list").insertAdjacentHTML(
+      "beforeend",
+      menuItemTemplate($espressoMenuName)
+    );
 
-      const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
-      $(".menu-count").innerText = `총 ${menuCount}개`;
-      $("#espresso-menu-name").value = "";
+    const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
+    $(".menu-count").innerText = `총 ${menuCount}개`;
+    $("#espresso-menu-name").value = "";
+  };
+
+  $("#espresso-menu-submit-button").addEventListener("click", () => {
+    addEspressoMenuName();
+  });
+
+  // 메뉴의 이름을 입력 받기
+  $("#espresso-menu-name").addEventListener("keypress", (e) => {
+    if (e.key !== "Enter") return;
+
+    if (e.key === "Enter") {
+      addEspressoMenuName();
     }
   });
 }
