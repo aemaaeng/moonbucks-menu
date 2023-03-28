@@ -2,8 +2,8 @@
 // TODO 메뉴 추가
 // - [x] 에스프레소 메뉴에 새로운 메뉴를 엔터키 입력으로 추가한다.
 // - [ ] 에스프레소 메뉴에 새로운 메뉴를 확인 버튼으로 추가한다.
-// - [ ] 추가되는 메뉴의 아래 마크업은 `<ul id="espresso-menu-list" class="mt-3 pl-0"></ul>` 안에 삽입해야 한다.
-// - [ ] 메뉴가 추가되고 나면, input은 빈 값으로 초기화한다.
+// - [x] 추가되는 메뉴의 아래 마크업은 `<ul id="espresso-menu-list" class="mt-3 pl-0"></ul>` 안에 삽입해야 한다.
+// - [x] 메뉴가 추가되고 나면, input은 빈 값으로 초기화한다.
 // - [ ] 사용자 입력값이 빈 값이라면 추가되지 않는다.
 
 // TODO 메뉴 수정
@@ -49,6 +49,9 @@ function App() {
         "beforeend",
         menuItemTemplate($espressoMenuName)
       );
+
+      const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
+      $(".menu-count").innerText = `총 ${menuCount}개`;
     }
   });
 }
