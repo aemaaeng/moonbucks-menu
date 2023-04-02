@@ -1,6 +1,6 @@
 // step 2: 요구사항 구현을 위한 전략
 // - [x] localStorage에 데이터를 저장한다.
-// - [ ] localStorage에 있는 데이터를 읽어온다.
+// - [x] localStorage에 있는 데이터를 읽어온다.
 
 // - [ ] 에스프레소 메뉴판을 관리한다.
 // - [ ] 프라푸치노 메뉴판을 관리한다.
@@ -22,29 +22,26 @@ const store = {
     localStorage.setItem("menu", JSON.stringify(menu));
   },
   getLocalStorage() {
-    localStorage.getItem("menu");
+    return JSON.parse(localStorage.getItem("menu"));
   },
 };
 
 function App() {
   // 변하는 것: 메뉴명
   this.menu = [];
+  this.init = () => {
+    if (store.getLocalStorage().length > 1) {
+      this.menu = store.getLocalStorage();
+    }
+    render();
+  };
 
   const updateMenuCount = () => {
     const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
     $(".menu-count").innerText = `총 ${menuCount}개`;
   };
 
-  const addMenuName = () => {
-    const $espressoMenuName = $("#espresso-menu-name").value;
-
-    if ($espressoMenuName === "") {
-      alert("값을 입력해주세요.");
-      return;
-    }
-
-    this.menu.push({ name: $espressoMenuName });
-    store.setLocalStorage(this.menu);
+  const render = () => {
     const template = this.menu
       .map((item, index) => {
         return `<li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
@@ -66,8 +63,21 @@ function App() {
       .join("");
 
     $("#espresso-menu-list").innerHTML = template;
-
     updateMenuCount();
+  };
+
+  const addMenuName = () => {
+    const $espressoMenuName = $("#espresso-menu-name").value;
+
+    if ($espressoMenuName === "") {
+      alert("값을 입력해주세요.");
+      return;
+    }
+
+    this.menu.push({ name: $espressoMenuName });
+    store.setLocalStorage(this.menu);
+
+    render();
     $("#espresso-menu-name").value = "";
   };
 
@@ -121,3 +131,4 @@ function App() {
 }
 
 const app = new App();
+app.init();
