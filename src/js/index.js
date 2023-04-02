@@ -85,7 +85,10 @@ function App() {
 
   const removeMenuName = (e) => {
     if (confirm("정말 삭제하시겠습니까?")) {
+      const menuId = e.target.closest("li").dataset.menuId;
       e.target.closest("li").remove();
+      this.menu.splice(menuId, 1);
+      store.setLocalStorage(this.menu);
       updateMenuCount();
     }
   };
