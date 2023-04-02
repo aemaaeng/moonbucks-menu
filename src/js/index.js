@@ -2,14 +2,14 @@
 // - [x] localStorage에 데이터를 저장한다.
 // - [x] localStorage에 있는 데이터를 읽어온다.
 
-// - [ ] 에스프레소 메뉴판을 관리한다.
-// - [ ] 프라푸치노 메뉴판을 관리한다.
-// - [ ] 블렌디드 메뉴판을 관리한다.
-// - [ ] 티바나 메뉴판을 관리한다.
-// - [ ] 디저트 메뉴판을 관리한다.
+// - [x] 에스프레소 메뉴판을 관리한다.
+// - [x] 프라푸치노 메뉴판을 관리한다.
+// - [x] 블렌디드 메뉴판을 관리한다.
+// - [x] 티바나 메뉴판을 관리한다.
+// - [x] 디저트 메뉴판을 관리한다.
 
-// - [ ] 최초에 접근할 때 localStorage에서 에스프레소 메뉴를 읽어온다.
-// - [ ] 에스프레소 메뉴를 페이지에 그려준다.
+// - [x] 최초에 접근할 때 localStorage에서 에스프레소 메뉴를 읽어온다.
+// - [x] 에스프레소 메뉴를 페이지에 그려준다.
 
 // - [ ] 품절 버튼을 추가한다.
 // - [ ] 품절 버튼 클릭 시 localStorage에 상태값이 저장된다.
@@ -28,21 +28,30 @@ const store = {
 
 function App() {
   // 변하는 것: 메뉴명
-  this.menu = [];
+  this.menu = {
+    espresso: [],
+    frappuccino: [],
+    blended: [],
+    teavana: [],
+    dessert: [],
+  };
+
+  this.currentCategory = "espresso";
+
   this.init = () => {
-    if (store.getLocalStorage().length > 1) {
+    if (store.getLocalStorage()) {
       this.menu = store.getLocalStorage();
     }
     render();
   };
 
   const updateMenuCount = () => {
-    const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
+    const menuCount = $("#menu-list").querySelectorAll("li").length;
     $(".menu-count").innerText = `총 ${menuCount}개`;
   };
 
   const render = () => {
-    const template = this.menu
+    const template = this.menu[this.currentCategory]
       .map((item, index) => {
         return `<li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
         <span class="w-100 pl-2 menu-name">${item.name}</span>
@@ -62,23 +71,23 @@ function App() {
       })
       .join("");
 
-    $("#espresso-menu-list").innerHTML = template;
+    $("#menu-list").innerHTML = template;
     updateMenuCount();
   };
 
   const addMenuName = () => {
-    const $espressoMenuName = $("#espresso-menu-name").value;
+    const $espressoMenuName = $("#menu-name").value;
 
     if ($espressoMenuName === "") {
       alert("값을 입력해주세요.");
       return;
     }
 
-    this.menu.push({ name: $espressoMenuName });
+    this.menu[this.currentCategory].push({ name: $espressoMenuName });
     store.setLocalStorage(this.menu);
 
     render();
-    $("#espresso-menu-name").value = "";
+    $("#menu-name").value = "";
   };
 
   const updateMenuName = (e) => {
@@ -88,7 +97,7 @@ function App() {
       "수정할 메뉴명을 입력해주세요",
       $menuName.innerText
     );
-    this.menu[menuId].name = updatedName;
+    this.menu[this.currentCategory][menuId].name = updatedName;
     store.setLocalStorage(this.menu);
     $menuName.innerText = updatedName;
   };
@@ -97,21 +106,21 @@ function App() {
     if (confirm("정말 삭제하시겠습니까?")) {
       const menuId = e.target.closest("li").dataset.menuId;
       e.target.closest("li").remove();
-      this.menu.splice(menuId, 1);
+      this.menu[this.currentCategory].splice(menuId, 1);
       store.setLocalStorage(this.menu);
       updateMenuCount();
     }
   };
 
   // form 태그 자동 전송 방지
-  $("#espresso-menu-form").addEventListener("submit", (e) => {
+  $("#menu-form").addEventListener("submit", (e) => {
     e.preventDefault();
   });
 
-  $("#espresso-menu-submit-button").addEventListener("click", addMenuName);
+  $("#menu-submit-button").addEventListener("click", addMenuName);
 
   // 메뉴의 이름을 입력 받기
-  $("#espresso-menu-name").addEventListener("keypress", (e) => {
+  $("#menu-name").addEventListener("keypress", (e) => {
     if (e.key !== "Enter") return;
 
     if (e.key === "Enter") {
@@ -119,13 +128,24 @@ function App() {
     }
   });
 
-  $("#espresso-menu-list").addEventListener("click", (e) => {
+  $("#menu-list").addEventListener("click", (e) => {
     if (e.target.classList.contains("menu-edit-button")) {
       updateMenuName(e);
     }
 
     if (e.target.classList.contains("menu-remove-button")) {
       removeMenuName(e);
+    }
+  });
+
+  $("nav").addEventListener("click", (e) => {
+    const isCategoryButton = e.target.classList.contains("cafe-category-name");
+    if (isCategoryButton) {
+      const categoryName = e.target.dataset.categoryName;
+      this.currentCategory = categoryName;
+      // 화면도 바꾸기
+      $("#category-title").innerText = `${e.target.innerText} 메뉴 관리`;
+      render();
     }
   });
 }
