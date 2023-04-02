@@ -46,8 +46,8 @@ function App() {
     this.menu.push({ name: $espressoMenuName });
     store.setLocalStorage(this.menu);
     const template = this.menu
-      .map((item) => {
-        return `<li class="menu-list-item d-flex items-center py-2">
+      .map((item, index) => {
+        return `<li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
         <span class="w-100 pl-2 menu-name">${item.name}</span>
         <button
           type="button"
@@ -72,11 +72,14 @@ function App() {
   };
 
   const updateMenuName = (e) => {
+    const menuId = e.target.closest("li").dataset.menuId;
     const $menuName = e.target.closest("li").querySelector(".menu-name");
     const updatedName = prompt(
       "수정할 메뉴명을 입력해주세요",
       $menuName.innerText
     );
+    this.menu[menuId].name = updatedName;
+    store.setLocalStorage(this.menu);
     $menuName.innerText = updatedName;
   };
 
